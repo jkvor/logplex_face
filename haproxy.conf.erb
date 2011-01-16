@@ -1,0 +1,21 @@
+global
+    maxconn 20000
+    log 127.0.0.1 local0 info
+
+listen logplexssh :443
+    mode tcp
+    log global
+    option tcplog
+    balance roundrobin
+<% @@logplex_instances.each do |ip,weight| %>
+    server <%= ip %>:443 check weight <%= weight %>
+<% end %>
+
+listen logplextcp :601
+    mode tcp
+    log global
+    option tcplog
+    balance roundrobin
+<% @@logplex_instances.each do |ip,weight| %>
+    server <%= ip %>:601 check weight <%= weight %>
+<% end %>
