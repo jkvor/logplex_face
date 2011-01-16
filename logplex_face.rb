@@ -9,9 +9,9 @@ module LogplexFace
 
   extend self
 
-  HAPROXY_CONF = "/opt/logplex_face/haproxy.conf"
+  HAPROXY_CONF = "haproxy.conf"
   REDIS_URL = ENV["LOGPLEX_CONFIG_REDIS_URL"] || raise("missing LOGPLEX_CONFIG_REDIS_URL")
-  CLOUD = ENV['HEROKU_DOMAIN']
+  CLOUD = ENV['HEROKU_DOMAIN'] || raise("missing HEROKU_DOMAIN")
 
   @@logplex_instances = {}
 
@@ -40,6 +40,7 @@ module LogplexFace
   end
 
   def poll
+    log("init", "LogplexFace.poll")
     uri = URI.parse(REDIS_URL)
     redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.user)
     loop do
