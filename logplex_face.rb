@@ -32,7 +32,7 @@ module LogplexFace
   def write_file
     content = generate
     File.open(HAPROXY_CONF, "w") {|f| f.write(content) }
-    log("reload", `reload haproxy`)
+    log("restart", `restart haproxy`)
   end
 
   def generate
