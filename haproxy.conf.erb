@@ -7,8 +7,8 @@ listen logplexssh :443
     log global
     option tcplog
     balance roundrobin
-<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %>:443 check weight <%= weight %>
+<% index = 0 %><% @@logplex_instances.each do |ip,weight| %>
+    server logplexssh<%= index += 1 %> <%= ip %>:443 check weight <%= weight %>
 <% end %>
 
 listen logplextcp :601
@@ -16,6 +16,6 @@ listen logplextcp :601
     log global
     option tcplog
     balance roundrobin
-<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %>:601 check weight <%= weight %>
+<% index = 0 %><% @@logplex_instances.each do |ip,weight| %>
+    server logplextcp<%= index += 1 %> <%= ip %>:601 check weight <%= weight %>
 <% end %>
