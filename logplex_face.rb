@@ -47,8 +47,9 @@ module LogplexFace
       new_instances = {}
       redis.keys("#{CLOUD}:alive:*").each do |key|
         ip = key.split(":").last
-        weight = redis.get(key)
+        weight = redis.get("#{CLOUD}:weight:#{ip}")
         new_instances[ip] = weight if weight
+        new_instances[ip] = "100" unless weight
       end
       compare(new_instances)
       sleep(1)
