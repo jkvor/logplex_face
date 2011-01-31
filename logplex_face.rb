@@ -16,8 +16,16 @@ module LogplexFace
   @@logplex_instances = {}
 
   def compare(new_instances)
-    unless @@logplex_instances.eql?(new_instances)
+    if @@logplex_instances.keys.sort != new_instances.keys.sort
       log("update", "#{@@logplex_instances.inspect} to #{new_instances.inspect}")
+      @@logplex_instances = new_instances
+      write_file
+      reload_config
+    elsif !@@logplex_instances.eql?(new_instances)
+      log("set weight", "#{@@logplex_instances.inspect} to #{new_instances.inspect}")
+      @@logplex_instances.each do |ip,weight|
+        set_weight(ip,weight) unless weight == new_instances[ip]
+      end
       @@logplex_instances = new_instances
       write_file
     end
@@ -32,7 +40,15 @@ module LogplexFace
   def write_file
     content = generate
     File.open(HAPROXY_CONF, "w") {|f| f.write(content) }
+  end
+
+  def reload_config
     log("restart", `restart haproxy`)
+  end
+
+  def set_weight(ip, weight)
+    log("update http weight", `echo "set weight logplexhttp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy stdio`)
+    log("update tcp weight", `echo "set weight logplextcp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy stdio`)
   end
 
   def generate

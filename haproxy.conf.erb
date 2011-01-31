@@ -1,21 +1,26 @@
 global
     maxconn 20000
     log 127.0.0.1 local0 info
+    stats socket /tmp/haproxy.sok
 
-listen logplexssh :443
+listen logplexhttp :443
     mode tcp
     log global
     option tcplog
-    balance roundrobin
-<% index = 0 %><% @@logplex_instances.each do |ip,weight| %>
-    server logplexssh<%= index += 1 %> <%= ip %>:443 check weight <%= weight %>
+    timeout client 30s
+    timeout connect 5s
+    timeout server 30s
+    balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
+    server <%= ip %> <%= ip %>:443 check weight <%= weight %>
 <% end %>
 
 listen logplextcp :601
     mode tcp
     log global
     option tcplog
-    balance roundrobin
-<% index = 0 %><% @@logplex_instances.each do |ip,weight| %>
-    server logplextcp<%= index += 1 %> <%= ip %>:601 check weight <%= weight %>
+    timeout client 30s
+    timeout connect 5s
+    timeout server 1d
+    balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
+    server <%= ip %> <%= ip %>:601 check weight <%= weight %>
 <% end %>
