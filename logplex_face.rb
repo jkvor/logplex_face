@@ -23,8 +23,8 @@ module LogplexFace
       reload_config
     elsif !@@logplex_instances.eql?(new_instances)
       log("set weight", "#{@@logplex_instances.inspect} to #{new_instances.inspect}")
-      @@logplex_instances.each do |ip,weight|
-        set_weight(ip,weight) unless weight == new_instances[ip]
+      new_instances.each do |ip,weight|
+        set_weight(ip,weight) unless weight == @@logplex_instances[ip]
       end
       @@logplex_instances = new_instances
       write_file
@@ -47,8 +47,10 @@ module LogplexFace
   end
 
   def set_weight(ip, weight)
-    log("update http weight", `echo "set weight logplexhttp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy stdio`)
-    log("update tcp weight", `echo "set weight logplextcp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy stdio`)
+    `echo "set weight logplexhttp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy.sock stdio`
+    `echo "set weight logplextcp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy.sock stdio`
+    log("update http weight", `echo "get weight logplexhttp/#{ip}" | socat unix-connect:/tmp/haproxy.sock stdio`.strip)
+    log("update tcp weight", `echo "get weight logplextcp/#{ip}" | socat unix-connect:/tmp/haproxy.sock stdio`.strip)
   end
 
   def generate

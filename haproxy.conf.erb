@@ -1,7 +1,7 @@
 global
     maxconn 20000
     log 127.0.0.1 local0 info
-    stats socket /tmp/haproxy.sok
+    stats socket /tmp/haproxy.sock level admin
 
 listen logplexhttp :443
     mode tcp
