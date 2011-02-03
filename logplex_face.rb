@@ -61,6 +61,7 @@ module LogplexFace
     log("init", "LogplexFace.poll")
     uri = URI.parse(REDIS_URL)
     redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.user)
+    last_instances = {} # this is a failsafe to ensure consistent redis queries
     loop do
       new_instances = {}
       redis.keys("#{CLOUD}:alive:*").each do |key|
@@ -69,8 +70,10 @@ module LogplexFace
         new_instances[ip] = weight if weight
         new_instances[ip] = "100" unless weight
       end
-      compare(new_instances)
-      sleep(1)
+      # last two redis queries must be identical before allowing config to be rewritten
+      compare(new_instances) if last_instances == new_instances 
+      last_instances = new_instances
+      sleep(2)
     end
   end
 end
