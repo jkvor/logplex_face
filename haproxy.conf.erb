@@ -7,20 +7,18 @@ listen logplexhttp :443
     mode tcp
     log global
     option tcplog
-    timeout client 30s
+    timeout client 1d
     timeout connect 5s
-    timeout server 30s
+    timeout server 1d
     balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %> <%= ip %>:443 check weight <%= weight %>
-<% end %>
+    server <%= ip %> <%= ip %>:443 check weight <%= weight %><% end %>
 
 listen logplextcp :601
     mode tcp
     log global
     option tcplog
-    timeout client 30s
+    timeout client 1d
     timeout connect 5s
     timeout server 1d
     balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %> <%= ip %>:601 check weight <%= weight %>
-<% end %>
+    server <%= ip %> <%= ip %>:601 check weight <%= weight %><% end %>
