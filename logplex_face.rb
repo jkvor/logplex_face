@@ -1,6 +1,7 @@
 $stdout.sync = $stderr.sync = true
 
 require "rubygems"
+require "thread"
 require "redis"
 require "uri"
 require "erb"
