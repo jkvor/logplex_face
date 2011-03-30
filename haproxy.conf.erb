@@ -32,23 +32,3 @@ listen logplexsyslog :601
     timeout server 1d
     balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
     server <%= ip %> <%= ip %>:601 check weight <%= weight %><% end %>
-
-listen logplextcp2 :5514
-    mode tcp
-    log global
-    option tcplog
-    timeout client 1d
-    timeout connect 5s
-    timeout server 1d
-    balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %> <%= ip %>:514 check weight <%= weight %><% end %>
-
-listen logplexsyslog2 :6601
-    mode tcp
-    log global
-    option tcplog
-    timeout client 1d
-    timeout connect 5s
-    timeout server 1d
-    balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %> <%= ip %>:601 check weight <%= weight %><% end %>
