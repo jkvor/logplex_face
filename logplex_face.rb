@@ -13,6 +13,7 @@ module LogplexFace
   HAPROXY_CONF = "haproxy.conf"
   REDIS_URL = ENV["LOGPLEX_CONFIG_REDIS_URL"] || raise("missing LOGPLEX_CONFIG_REDIS_URL")
   CLOUD = ENV['HEROKU_DOMAIN'] || raise("missing HEROKU_DOMAIN")
+  VERSION = ENV['LOGPLEX_VERSION'] || ""
 
   @@logplex_instances = {}
 
@@ -67,9 +68,11 @@ module LogplexFace
     last_instances = {} # this is a failsafe to ensure consistent redis queries
     loop do
       new_instances = {}
-      redis.keys("#{CLOUD}:alive:*").each do |key|
-        ip = key.split(":").last
-        weight = redis.get("#{CLOUD}:weight:#{ip}")
+      match = "redgrid:#{CLOUD}:#{VERSION}:*"
+      redis.keys(match).each do |key|
+        res = redis.hmget(key, "ip", "weight")
+        ip = res[0]
+        weight = res[1]
         new_instances[ip] = weight if weight
         new_instances[ip] = "100" unless weight
       end
