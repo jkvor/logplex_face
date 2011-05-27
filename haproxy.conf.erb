@@ -6,18 +6,17 @@ global
 listen logplexhttp :8000
     mode http
     option httplog
-    maxconn 2000 
+    maxconn 10000
     contimeout 5000 
     clitimeout 50000 
     srvtimeout 50000
-    cookie LOGPLEX insert
     log global
     option tcplog
     timeout client 1d
     timeout connect 5s
     timeout server 1d
-    balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %> <%= ip %>:8001 cookie LOGPLEX-<%= ip %> check weight <%= weight %><% end %>
+    balance url_param srv check_post max_wait 0<% @@logplex_instances.each do |ip,weight| %>
+    server <%= ip %> <%= ip %>:8001 check weight <%= weight %><% end %>
 
 listen logplextcp :514
     mode tcp
