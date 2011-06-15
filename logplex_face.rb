@@ -34,7 +34,7 @@ module LogplexFace
   end
 
   def log(event, data=nil)
-    line = "timestamp=#{Time.now.to_i} [#{event}]"
+    line = "#{Time.now} [#{event}]"
     line << " #{data}" if data
     $stdout.puts(line)
   end
