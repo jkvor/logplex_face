@@ -11,7 +11,7 @@ module LogplexFace
   extend self
 
   HAPROXY_CONF = "haproxy.conf"
-  REDIS_URL = ENV["LOGPLEX_CONFIG_REDIS_URL"] || raise("missing LOGPLEX_CONFIG_REDIS_URL")
+  REDIS_URL = ENV["LOGPLEX_STATS_REDIS_URL"] || raise("missing LOGPLEX_STATS_REDIS_URL")
   CLOUD = ENV['HEROKU_DOMAIN'] || raise("missing HEROKU_DOMAIN")
   VERSION = ENV['LOGPLEX_VERSION'] || ""
 
