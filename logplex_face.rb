@@ -49,12 +49,12 @@ module LogplexFace
   end
 
   def set_weight(ip, weight)
-    `echo "set weight logplexhttp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy.sock stdio`
     `echo "set weight logplextcp/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy.sock stdio`
     `echo "set weight logplexsyslog/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy.sock stdio`
-    log("update http weight", `echo "get weight logplexhttp/#{ip}" | socat unix-connect:/tmp/haproxy.sock stdio`.strip)
     log("update tcp weight", `echo "get weight logplextcp/#{ip}" | socat unix-connect:/tmp/haproxy.sock stdio`.strip)
     log("update syslog weight", `echo "get weight logplexsyslog/#{ip}" | socat unix-connect:/tmp/haproxy.sock stdio`.strip)
+    `echo "set weight logplexapi/#{ip} #{weight}" | socat unix-connect:/tmp/haproxy.sock stdio`
+    log("update http weight", `echo "get weight logplexapi/#{ip}" | socat unix-connect:/tmp/haproxy.sock stdio`.strip)
   end
 
   def generate

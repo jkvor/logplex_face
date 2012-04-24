@@ -3,30 +3,7 @@ global
     log 127.0.0.1 local0
     stats socket /tmp/haproxy.sock level admin
 
-frontend logplexhttp
-    bind *:8000
-    mode http
-    option httplog
-    maxconn 10000
-    clitimeout 1h
-    timeout client 1h
-    log global
-    option tcplog
-    acl acl1 path_reg ^/channels/\d+/logs$
-    use_backend httplogs if acl1
-    default_backend logplexapi
-
-backend httplogs
-    mode http
-    option httplog
-    contimeout 5000
-    srvtimeout 1h
-    timeout server 1h
-    log global
-    option tcplog<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %> <%= ip %>:8080 check weight <%= weight %><% end %>
-
-backend logplexapi
+listen logplexapi :8000
     mode http
     option httplog
     contimeout 5000
