@@ -21,7 +21,7 @@ listen logplexviasyslog :514
     timeout client 1d
     timeout connect 5s
     timeout server 1d
-    balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
+    balance leastconn<% @@logplex_instances.each do |ip,weight| %>
     server <%= ip %> <%= ip %>:514 check weight <%= weight %><% end %>
 
 listen logplexdirect :601
@@ -32,5 +32,5 @@ listen logplexdirect :601
     timeout client 1d
     timeout connect 5s
     timeout server 1d
-    balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
-    server <%= ip %> <%= ip %>:601 check weight <%= weight %><% end %>
+    balance leastconn<% @@logplex_instances.each do |ip,weight| %>
+    server <%= ip %> <%= ip %>:6001 check weight <%= weight %><% end %>
