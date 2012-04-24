@@ -1,0 +1,1 @@
+logplex_face: bundle exec ./logplex_face
