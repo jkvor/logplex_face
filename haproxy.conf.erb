@@ -14,7 +14,7 @@ listen logplexapi :8000
     balance url_param srv check_post max_wait 0<% @@logplex_instances.each do |ip,weight| %>
     server <%= ip %> <%= ip %>:8001 check weight <%= weight %><% end %>
 
-listen logplextcp :514
+listen logplexviasyslog :514
     mode tcp
     log global
     option tcplog
@@ -24,7 +24,7 @@ listen logplextcp :514
     balance roundrobin<% @@logplex_instances.each do |ip,weight| %>
     server <%= ip %> <%= ip %>:514 check weight <%= weight %><% end %>
 
-listen logplexsyslog :601
+listen logplexdirect :601
     mode tcp
     log global
     option tcplog
