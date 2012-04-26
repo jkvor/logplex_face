@@ -11,7 +11,7 @@ listen logplexapi :8000
     timeout server 1h
     log global
     option tcplog
-    balance url_param srv check_post max_wait 0<% @@logplex_instances.each do |ip,weight| %>
+    balance url_param srv check_post max_wait 0<% @@logplex_instances.sort.each do |ip,weight| %>
     server <%= ip %> <%= ip %>:8001 check weight <%= weight %><% end %>
 
 listen logplexviasyslog :514
